@@ -21,8 +21,8 @@ let simpleLightBox
 
 
 
-BASE_URL = "https://pixabay.com/api/"
-TOKEN = "36715459-28e84205f82fac02ca5e4373e"
+const BASE_URL = "https://pixabay.com/api/"
+const TOKEN = "36715459-28e84205f82fac02ca5e4373e"
 
 async function fetchImages(page = 1) {   
 return fetch(
