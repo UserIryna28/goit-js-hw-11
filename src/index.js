@@ -37,21 +37,24 @@ async function fetchImages(query, page) {
   const response = await axios.get(`${BASE_URL}/?${params}`);
   return response;
 }
-// async function fetchImages(query, page) {   
+// async function fetchImages(query, page) {
 // return fetch(
 //     `${BASE_URL}?key=${TOKEN}&page=${page}`,
 // ).then(response => {
 //     if (!response.ok) {
 //             throw new Error(response.statusText)
 //        }
-//         return response.json()   
-//        })  
+//         return response.json()
+//        })
 // }
    
 //   fetchImages()
 //       .then(data => {
 //  gallery.insertAdjacentHTML("beforeend", markup)
 //       })
+
+
+
 form.addEventListener("submit", onForm)
    function onForm(evt) {
     evt.preventDefault()
@@ -84,30 +87,32 @@ form.addEventListener("submit", onForm)
       }
     })
            .catch(error => console.log(error))
-       gallery.insertAdjacentHTML("beforeend", createCard(query.hits))
+       gallery.insertAdjacentHTML("beforeend", createCard(data.hits))
 }
  
  
-function createCard(arr) {
+function createCard(images) {
+     const markup = images
+         .map(image => {
+             const { id, largeImageURL, webformatURL, tags, likes, views, comments, downloads } = image
+     return `
+         <a class="gallery__link" href="${largeImageURL}">
+           <div class="gallery-item" id="${id}">
+             <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
+             <div class="info">
+               <p class="info-item"><b>Likes</b>${likes}</p>
+               <p class="info-item"><b>Views</b>${views}</p>
+               <p class="info-item"><b>Comments</b>${comments}</p>
+               <p class="info-item"><b>Downloads</b>${downloads}</p>
+             </div>
+           </div>
+         </a>
+       `
+ })
+         .join('')
     
-   return arr.map(({ id, largeImageURL, webformatURL, tags, likes, views, comments, downloads }) =>  
-            `
-        <a class="gallery__link" href="${largeImageURL}">
-          <div class="gallery-item" id="${id}">
-            <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
-            <div class="info">
-              <p class="info-item"><b>Likes</b>${likes}</p>
-              <p class="info-item"><b>Views</b>${views}</p>
-              <p class="info-item"><b>Comments</b>${comments}</p>
-              <p class="info-item"><b>Downloads</b>${downloads}</p>
-            </div>
-          </div>
-        </a>
-      `
-        )
-        .join('')
-    //    gallery.insertAdjacentHTML("beforeend", createCard(data.hits))
-}
+    gallery.insertAdjacentHTML("beforeend", markup)
+ }
  
 
 
