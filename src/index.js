@@ -16,7 +16,7 @@ let query = ""
 let page = 1;
 const perPage = 40;
 let simpleLightBox
-
+buttonLoadMore.hidden = true
 
 
 
@@ -58,21 +58,19 @@ async function fetchImages(query, page) {
 form.addEventListener("submit", onForm)
    function onForm(evt) {
     evt.preventDefault()
-    
+    buttonLoadMore.hidden = true
     page = 1
 
        query = evt.currentTarget.searchQuery.value.trim()
        gallery.innerHTML = ''
-//   buttonLoadMore.classList.add('is-hidden')
+
 
     if (query === "") {
         Notify.failure("Please enter a search query")
         return
        }
        fetchImages(query, page)
-//       .then(query => {
-//  gallery.insertAdjacentHTML("beforeend", createCard(query.hits))
-//       })
+
        .then(({ data }) => {
       if (data.totalHits === 0) {
         Notify.failure('Sorry, there are no images matching your search query. Please try again.')
@@ -82,9 +80,11 @@ form.addEventListener("submit", onForm)
         Notify.success(`Hooray! We found ${data.totalHits} images.`)
 
           if (data.totalHits > perPage) {
-            // buttonLoadMore.classList.add('is-hidden')
-          buttonLoadMore.classList.remove('is-hidden')
-        }
+              buttonLoadMore.hidden = false
+            
+        }else {
+               buttonLoadMore.hidden = true 
+            }
       }
     })
            .catch(error => console.log(error))
@@ -122,21 +122,19 @@ buttonLoadMore.addEventListener("click",onButtonLoadMore)
 
 function onButtonLoadMore() {
     page += 1
-    perPage = 40
      simpleLightBox
 
-     fetchImages(query, page, perPage)
-       .then(({ data }) => {
-        createCard(data.hits)
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh()
+    fetchImages(query, page, perPage)
+        .then(({ data }) => {
+            createCard(data.hits)
+            simpleLightBox = new SimpleLightbox('.gallery a').refresh()
 
-         const totalPages = Math.ceil(data.totalHits / perPage)
+            const totalPages = Math.ceil(data.totalHits / perPage)
 
-           if (page > totalPages) {
-             
-          buttonLoadMore.classList.add('is-hidden')
-           Notify.failure("We're sorry, but you've reached the end of search results.")
-         }
+            if (page > totalPages) {
+                
+                Notify.failure("We're sorry, but you've reached the end of search results.")
+            } 
        })
        .catch(error => console.log(error))
    }
