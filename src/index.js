@@ -63,13 +63,13 @@ form.addEventListener("submit", onForm)
 
        query = evt.currentTarget.searchQuery.value.trim()
        gallery.innerHTML = ''
-  buttonLoadMore.classList.add('is-hidden')
+//   buttonLoadMore.classList.add('is-hidden')
 
-    if (query.trim() === "") {
+    if (query === "") {
         Notify.failure("Please enter a search query")
         return
        }
-       fetchImages()
+       fetchImages(query, page)
 //       .then(query => {
 //  gallery.insertAdjacentHTML("beforeend", createCard(query.hits))
 //       })
@@ -81,13 +81,14 @@ form.addEventListener("submit", onForm)
         simpleLightBox = new SimpleLightbox('.gallery a').refresh()
         Notify.success(`Hooray! We found ${data.totalHits} images.`)
 
-        if (data.totalHits > perPage) {
+          if (data.totalHits > perPage) {
+            // buttonLoadMore.classList.add('is-hidden')
           buttonLoadMore.classList.remove('is-hidden')
         }
       }
     })
            .catch(error => console.log(error))
-       gallery.insertAdjacentHTML("beforeend", createCard(data.hits))
+       
 }
  
  
@@ -119,34 +120,21 @@ function createCard(images) {
 buttonLoadMore.addEventListener("click",onButtonLoadMore)
 
 
-
-
-// function onButtonLoadMore() {
-//      currentPage += 1;
-//      // const image = await fetchImages(query, page);
-//      const totalPages = Math.ceil(data.totalHits / perPage)
-//      if (page > totalPages) {
-//          createCard(image);
-//      } else {
-//          buttonLoadMore.style.display = 'none';
-//          Notify.info("We're sorry, but you've reached the end of search results.");
-//      }
-//  }
-// 
-
 function onButtonLoadMore() {
-      page += 1
+    page += 1
+    perPage = 40
      simpleLightBox
 
-     fetchImages()
+     fetchImages(query, page, perPage)
        .then(({ data }) => {
         createCard(data.hits)
         simpleLightBox = new SimpleLightbox('.gallery a').refresh()
 
          const totalPages = Math.ceil(data.totalHits / perPage)
 
-         if (page > totalPages) {
-           buttonLoadMore.classList.add('is-hidden')
+           if (page > totalPages) {
+             
+          buttonLoadMore.classList.add('is-hidden')
            Notify.failure("We're sorry, but you've reached the end of search results.")
          }
        })
