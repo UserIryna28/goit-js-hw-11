@@ -34,8 +34,8 @@ async function fetchImages(query, page) {
     per_page: perPage,
     page: page,
   });
-  const response = await axios.get(`${BASE_URL}/?${params}`);
-  return response;
+  return response = await axios.get(`${BASE_URL}/?${params}`);
+   
 }
 // async function fetchImages(query, page) {
 // return fetch(
@@ -132,9 +132,11 @@ function onButtonLoadMore() {
             const totalPages = Math.ceil(data.totalHits / perPage)
 
             if (page > totalPages) {
-                
-                Notify.failure("We're sorry, but you've reached the end of search results.")
-            } 
+                buttonLoadMore.hidden = true
+                Notify.info("We're sorry, but you've reached the end of search results.")
+            } else {
+               buttonLoadMore.hidden = false
+            }
        })
        .catch(error => console.log(error))
    }
