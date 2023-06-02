@@ -1,9 +1,9 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import axios from "axios"
-// import { fetchImages } from './js/fetchImages.js'
-// Описаний в документації
+import { createCard } from './js/createCard.js';
+import { fetchImages } from './js/fetchImages.js'
+
 import SimpleLightbox from "simplelightbox";
-// Додатковий імпорт стилів
+
 import "simplelightbox/dist/simple-lightbox.min.css";
 
  
@@ -19,24 +19,6 @@ let simpleLightBox
 buttonLoadMore.hidden = true
 
 
-
-
-
-const BASE_URL = "https://pixabay.com/api/"
-const TOKEN = "36715459-28e84205f82fac02ca5e4373e"
-async function fetchImages(query, page) {
-  const params = new URLSearchParams({
-    key: TOKEN,
-    q: query,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    per_page: perPage,
-    page: page,
-  });
-  return response = await axios.get(`${BASE_URL}/?${params}`);
-   
-}
 // async function fetchImages(query, page) {
 // return fetch(
 //     `${BASE_URL}?key=${TOKEN}&page=${page}`,
@@ -69,7 +51,7 @@ form.addEventListener("submit", onForm)
         Notify.failure("Please enter a search query")
         return
        }
-       fetchImages(query, page)
+       fetchImages(query, page, perPage)
 
        .then(({ data }) => {
       if (data.totalHits === 0) {
@@ -92,30 +74,6 @@ form.addEventListener("submit", onForm)
 }
  
  
-function createCard(images) {
-     const markup = images
-         .map(image => {
-             const { id, largeImageURL, webformatURL, tags, likes, views, comments, downloads } = image
-     return `
-         <a class="gallery__link" href="${largeImageURL}">
-           <div class="gallery-item" id="${id}">
-             <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
-             <div class="info">
-               <p class="info-item"><b>Likes</b>${likes}</p>
-               <p class="info-item"><b>Views</b>${views}</p>
-               <p class="info-item"><b>Comments</b>${comments}</p>
-               <p class="info-item"><b>Downloads</b>${downloads}</p>
-             </div>
-           </div>
-         </a>
-       `
- })
-         .join('')
-    
-    gallery.insertAdjacentHTML("beforeend", markup)
- }
- 
-
 
 buttonLoadMore.addEventListener("click",onButtonLoadMore)
 
