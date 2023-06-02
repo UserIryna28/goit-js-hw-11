@@ -1,7 +1,7 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { createCard } from './js/createCard.js';
 import { fetchImages } from './js/fetchImages.js'
-
+import axios from "axios";
 import SimpleLightbox from "simplelightbox";
 
 import "simplelightbox/dist/simple-lightbox.min.css";
@@ -38,7 +38,7 @@ buttonLoadMore.hidden = true
 
 
 form.addEventListener("submit", onForm)
-function onForm(evt) {
+async function onForm(evt) {
   evt.preventDefault()
   buttonLoadMore.hidden = true
   page = 1
@@ -51,28 +51,24 @@ function onForm(evt) {
     Notify.failure("Please enter a search query")
     return
   }
-  fetchImages(query, page, perPage)
+  const { data } = await fetchImages(query, page, perPage)
 try {
   createCard(data.hits);
   simpleLightBox = new SimpleLightbox('.gallery a').refresh()
   Notify.success(`Hooray! We found ${data.totalHits} images.`)
   
-  // .then(({ data }) => {
+  
   if (data.totalHits === 0) {
     Notify.failure('Sorry, there are no images matching your search query. Please try again.')
   
-    // } else {
-    //   createCard(data.hits)
-    //    simpleLightBox = new SimpleLightbox('.gallery a').refresh()
-    //    Notify.success(`Hooray! We found ${data.totalHits} images.`)
-
+  }
       if (data.totalHits > perPage) {
         buttonLoadMore.hidden = false
             
       } else {
         buttonLoadMore.hidden = true
       }
-    }
+    
   }
     catch (error) {
         Notify.failure("Error fetching images. Please try again later.");
@@ -85,13 +81,13 @@ try {
 buttonLoadMore.addEventListener("click",onButtonLoadMore)
 
 
-function onButtonLoadMore() {
+async function onButtonLoadMore() {
     page += 1
      simpleLightBox
 
-  fetchImages(query, page, perPage)
+  const { data } =  await fetchImages(query, page, perPage)
   try{
-        // .then(({ data }) => {
+        
             createCard(data.hits)
             simpleLightBox = new SimpleLightbox('.gallery a').refresh()
 
@@ -105,7 +101,7 @@ function onButtonLoadMore() {
             }
        }
        catch (error) {
-        Notify.failure("Error fetching images. Please try again later.");
+        Notify.failure("Error fetching images");
     }
    }
 
