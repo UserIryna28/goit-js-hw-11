@@ -38,42 +38,49 @@ buttonLoadMore.hidden = true
 
 
 form.addEventListener("submit", onForm)
-   function onForm(evt) {
-    evt.preventDefault()
-    buttonLoadMore.hidden = true
-    page = 1
+function onForm(evt) {
+  evt.preventDefault()
+  buttonLoadMore.hidden = true
+  page = 1
 
-       query = evt.currentTarget.searchQuery.value.trim()
-       gallery.innerHTML = ''
+  query = evt.currentTarget.searchQuery.value.trim()
+  gallery.innerHTML = ''
 
 
-    if (query === "") {
-        Notify.failure("Please enter a search query")
-        return
-       }
-       fetchImages(query, page, perPage)
+  if (query === "") {
+    Notify.failure("Please enter a search query")
+    return
+  }
+  fetchImages(query, page, perPage)
+try {
+  createCard(data.hits);
+  simpleLightBox = new SimpleLightbox('.gallery a').refresh()
+  Notify.success(`Hooray! We found ${data.totalHits} images.`)
+  
+  // .then(({ data }) => {
+  if (data.totalHits === 0) {
+    Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+  
+    // } else {
+    //   createCard(data.hits)
+    //    simpleLightBox = new SimpleLightbox('.gallery a').refresh()
+    //    Notify.success(`Hooray! We found ${data.totalHits} images.`)
 
-       .then(({ data }) => {
-      if (data.totalHits === 0) {
-        Notify.failure('Sorry, there are no images matching your search query. Please try again.')
-      } else {
-        createCard(data.hits)
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh()
-        Notify.success(`Hooray! We found ${data.totalHits} images.`)
-
-          if (data.totalHits > perPage) {
-              buttonLoadMore.hidden = false
+      if (data.totalHits > perPage) {
+        buttonLoadMore.hidden = false
             
-        }else {
-               buttonLoadMore.hidden = true 
-            }
+      } else {
+        buttonLoadMore.hidden = true
       }
-    })
-           .catch(error => console.log(error))
+    }
+  }
+    catch (error) {
+        Notify.failure("Error fetching images. Please try again later.");
+    }
        
-}
+  }
  
- 
+
 
 buttonLoadMore.addEventListener("click",onButtonLoadMore)
 
@@ -82,21 +89,24 @@ function onButtonLoadMore() {
     page += 1
      simpleLightBox
 
-    fetchImages(query, page, perPage)
-        .then(({ data }) => {
+  fetchImages(query, page, perPage)
+  try{
+        // .then(({ data }) => {
             createCard(data.hits)
             simpleLightBox = new SimpleLightbox('.gallery a').refresh()
 
             const totalPages = Math.ceil(data.totalHits / perPage)
 
-            if (page > totalPages) {
+            if (page >= totalPages) {
                 buttonLoadMore.hidden = true
                 Notify.info("We're sorry, but you've reached the end of search results.")
             } else {
                buttonLoadMore.hidden = false
             }
-       })
-       .catch(error => console.log(error))
+       }
+       catch (error) {
+        Notify.failure("Error fetching images. Please try again later.");
+    }
    }
 
  
